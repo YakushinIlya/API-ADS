@@ -14,7 +14,8 @@ $('#formLogin').on('submit', function (e) {
   $('.form-control').removeClass('is-invalid');
   $('small.form-text').addClass('d-none');
   var email = this['email'].value,
-      password = this['password'].value;
+      password = this['password'].value,
+      token_auth = '';
   $.ajax({
     type: 'POST',
     url: '/api/v1/login',
@@ -28,13 +29,21 @@ $('#formLogin').on('submit', function (e) {
     },
     success: function success(data) {
       if (data.status == 200) {
-        $("#nav-auth").html("<a href=\"".concat(data.url, "\" class=\"btn btn-success btn-block\">\u041F\u0435\u0440\u0435\u0439\u0442\u0438 \u0432 \u043F\u0440\u043E\u0444\u0438\u043B\u044C</a>"));
+        localStorage.setItem('api_token', data.api_token); //document.cookie = 'token_auth='+data.api_token+'; domain=ads.loc; max-age=2592000; SameSite=Lax; path=/; expires=Tue';
+
+        window.location.replace(data.url);
       }
     },
     error: function error(msg) {
-      for (var key in msg.responseJSON.errors) {
-        $("#".concat(key, "Err")).text(msg.responseJSON.errors[key][0]).removeClass('d-none');
-        $("#".concat(key)).addClass('is-invalid');
+      if (msg.status == 422) {
+        for (var key in msg.responseJSON.errors) {
+          $("#".concat(key, "Err")).text(msg.responseJSON.errors[key][0]).removeClass('d-none');
+          $("#".concat(key)).addClass('is-invalid');
+        }
+      }
+
+      if (msg.status == 400) {
+        $("#formLogin").after("<div class=\"alert alert-warning mt-2\">".concat(msg.responseJSON.message, "</div>"));
       }
     }
   });
@@ -56,6 +65,7 @@ $('#formRegister').on('submit', function (e) {
     },
     success: function success(data) {
       if (data.status == 200) {
+        localStorage.setItem('token_auth', data.token_auth);
         $("#nav-register").html("<div class=\"alert alert-success\">".concat(data.message, "</div>"));
       }
     },

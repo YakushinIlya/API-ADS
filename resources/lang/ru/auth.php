@@ -17,9 +17,4 @@ return [
             ],
         ],
     ],
-    'admin' => [
-        'email' => 'admin@ads.loc',
-        'first_name' => 'John',
-        'last_name' => 'Smith',
-    ],
 ];

@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 */
 
-Route::post('/test', [TestController::class, 'showTest'])->name('api.test');
+Route::middleware('auth:api')->match(['get', 'post'], '/test', [TestController::class, 'showTest'])->name('api.test');
 
 Route::post('/login', [LoginController::class, 'auth'])->name('api.login');
 Route::post('/register', [RegisterController::class, 'reg'])->name('api.register');

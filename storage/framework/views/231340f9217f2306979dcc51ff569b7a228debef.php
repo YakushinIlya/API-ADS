@@ -43,20 +43,20 @@
             </ul>
         </div>
         <div class="d-flex">
-            @guest
+            <?php if(auth()->guard()->guest()): ?>
                 <div class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Подать объявление</div>
-            @endguest
-            @auth
-                <a href="{{route('profile.index')}}" class="btn btn-success">{{Auth::user()->email}}</a>
-                <a href="{{route('logout')}}" class="btn btn-light">Выход</a>
-            @endauth
+            <?php endif; ?>
+            <?php if(auth()->guard()->check()): ?>
+                <a href="<?php echo e(route('profile.index')); ?>" class="btn btn-success"><?php echo e(Auth::user()->email); ?></a>
+                <a href="<?php echo e(route('logout')); ?>" class="btn btn-light">Выход</a>
+            <?php endif; ?>
         </div>
     </div>
 </nav>
 
-@yield('content')
+<?php echo $__env->yieldContent('content'); ?>
 
-@guest
+<?php if(auth()->guard()->guest()): ?>
     <!-- Модальное окно -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -76,8 +76,8 @@
                     </nav>
                     <div class="tab-content pt-3" id="nav-tabContent">
                         <div class="tab-pane fade show active" id="nav-auth" role="tabpanel" aria-labelledby="nav-home-tab">
-                            <form action="{{route('api.login')}}" method="post" id="formLogin">
-                                @csrf
+                            <form action="<?php echo e(route('api.login')); ?>" method="post" id="formLogin">
+                                <?php echo csrf_field(); ?>
                                 <div class="form-group">
                                     <input type="email" name="email" class="form-control" id="email" placeholder="Ваш e-mail">
                                     <small id="emailErr" class="form-text text-danger d-none"></small>
@@ -90,8 +90,8 @@
                             </form>
                         </div>
                         <div class="tab-pane fade" id="nav-register" role="tabpanel" aria-labelledby="nav-profile-tab">
-                            <form action="{{route('api.register')}}" method="post" id="formRegister">
-                                @csrf
+                            <form action="<?php echo e(route('api.register')); ?>" method="post" id="formRegister">
+                                <?php echo csrf_field(); ?>
                                 <div class="form-group">
                                     <input type="email" name="email" class="form-control" id="emailReg" placeholder="Ваш e-mail">
                                     <small id="emailRegErr" class="form-text text-danger d-none"></small>
@@ -105,7 +105,7 @@
             </div>
         </div>
     </div>
-@endguest
+<?php endif; ?>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
@@ -113,3 +113,4 @@
 
 </body>
 </html>
+<?php /**PATH D:\OpenServer\domains\ads.loc\resources\views/layouts/app.blade.php ENDPATH**/ ?>

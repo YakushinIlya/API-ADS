@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Validator;
 
 class LoginController extends Controller
@@ -15,6 +17,7 @@ class LoginController extends Controller
     {
         $userData = $request->only(['email', 'password']);
         $validator=$this->rule($userData);
+
         if($validator->fails()){
             $data = [
                 'status' => 422,
@@ -22,18 +25,20 @@ class LoginController extends Controller
             ];
             return response()->json($data, $data['status']);
         }
-        if(!Auth::attempt($userData)){
+
+        if(Auth::attempt($userData)){
+            $user = Auth::user();
             $data = [
-                'status' => 400,
-                'errors' => [
-                    'result' => 'Не удаловь войти',
-                ],
+                'status' => 200,
+                'api_token' => $user->api_token,
+                'url' => route('profile.index'),
             ];
             return response()->json($data, $data['status']);
         }
+
         $data = [
-            'status' => 200,
-            'url' => route('profile'),
+            'status' => 400,
+            'message' => __('auth.user.auth.message.error_in'),
         ];
         return response()->json($data, $data['status']);
     }
@@ -44,5 +49,10 @@ class LoginController extends Controller
             'email'    => 'required|email',
             'password' => 'required|string',
         ]);
+    }
+
+    public function logout()
+    {
+        Auth::logout();
     }
 }
